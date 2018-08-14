@@ -9,5 +9,8 @@ public class GameSettings {
 	// location on monitor
 	public static int loacationX = 500;
 	public static int locationY = 200;
+	
+	public static int BOARD_ROW = 10;
+	public static int BOARD_COL = 10;
 
 }
