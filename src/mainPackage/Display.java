@@ -13,11 +13,11 @@ public class Display {
 	public String title;
 	public Canvas canvas;
 
-	public Display(int width, int height, String title) {
+	public Display() {
 
-		this.height = height;
-		this.width = width;
-		this.title = title;
+		this.height = GameSettings.height;
+		this.width = GameSettings.width;
+		this.title = GameSettings.title;
 		canvas = new Canvas();
 		createDisplay();
 
