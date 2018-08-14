@@ -1,14 +1,15 @@
 package mainPackage;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 
-public class GameGraphics implements Runnable, MouseMotionListener {
+import temporary.Position;
+
+public class GameGraphics implements Runnable, MouseListener, MouseMotionListener {
 
 	private Display display;
 	private int width;
@@ -25,7 +26,7 @@ public class GameGraphics implements Runnable, MouseMotionListener {
 	private int paddingX = 50;
 	private int paddingY = 50;
 
-	private int boxSize = 50;
+	private int boxSize = 20;
 
 	private int boardRow;
 	private int boardCol;
@@ -36,6 +37,9 @@ public class GameGraphics implements Runnable, MouseMotionListener {
 	private String player;
 	private String playerCpu = "X";
 	private String playerHuman = "O";
+
+	private int sourceX = 20;
+	private int sourceY = 20;
 
 	private boolean isGameEnd = false;
 	private boolean isGameStarted = false;
@@ -67,7 +71,7 @@ public class GameGraphics implements Runnable, MouseMotionListener {
 
 		// display.canvas.addKeyListener(this);
 		display.canvas.addMouseMotionListener(this);
-		// display.canvas.addMouseListener(this);
+		display.canvas.addMouseListener(this);
 	}
 
 	private void drawBackground(Graphics g) {
@@ -117,7 +121,24 @@ public class GameGraphics implements Runnable, MouseMotionListener {
 
 	}
 
-	private void play(Graphics g) {
+	private void play() {
+		Position bestPosition = null;
+
+		if (player.equals(playerCpu)) {
+			bestPosition = game.getBestPosition(board);
+			if (!(bestPosition.row == -1 || bestPosition.col == -1)) {
+				board[sourceX][sourceY] = "-";
+				
+				game.winStatus(bestPosition.row,bestPosition.col);
+				
+				board[bestPosition.row][bestPosition.col] = "S";
+				player = playerHuman;
+				sourceX = bestPosition.row;
+				sourceY = bestPosition.col;
+				
+				System.out.println(sourceX + " " + sourceY);
+			}
+		}
 
 	}
 
@@ -141,9 +162,12 @@ public class GameGraphics implements Runnable, MouseMotionListener {
 	@Override
 	public void run() {
 		init();
+
 		board = game.initialiseBoard();
+		board[sourceX][sourceY] = "S";
 		while (true) {
 			render();
+			play();
 		}
 	}
 
@@ -185,6 +209,55 @@ public class GameGraphics implements Runnable, MouseMotionListener {
 			mousePointAtX = -1;
 			mousePointAtY = -1;
 		}
+
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (!isGameEnd && player.equals(playerHuman)) {
+
+			if (mousePointAtX < 1 || mousePointAtX > boardRow || mousePointAtY < 1 || mousePointAtY > boardCol) {
+				mousePointAtX = -1;
+				mousePointAtY = -1;
+			}
+
+			else {
+
+				int row = mousePointAtX - 1;
+				int col = mousePointAtY - 1;
+
+				if (board[row][col].equals("-")) {
+
+					board[row][col] = "#";
+
+					player = playerCpu;
+
+				}
+			}
+		} else {
+			mousePointAtX = -1;
+			mousePointAtY = -1;
+		}
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
 
 	}
 
